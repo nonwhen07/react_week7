@@ -4,14 +4,13 @@ import ReactLoading from 'react-loading';
 import axios from "axios";
 
 export default function LoginPage() {
+  
   // 初始化 navigate
   const navigate = useNavigate();
   // 環境變數
   const baseURL = import.meta.env.VITE_BASE_URL;
   // const apiPath = import.meta.env.VITE_API_PATH;
   const [account, setAccount] = useState({ username: "example@test.com", password: "example"});
-
-  
   const [isScreenLoading, setIsScreenLoading] = useState(false);
 
   // 登入表單 - 登入submit事件
