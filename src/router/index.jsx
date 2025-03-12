@@ -1,11 +1,11 @@
 import { createHashRouter } from "react-router-dom";
 import FonterLayout from "../layouts/FrontLayout";
-import HomePage from "../pages/HomePage";
-import ProductsPage from "../pages/ProductsPage";
-import CartPage from "../pages/CartPage";
-import ProductDetailPage from "../pages/ProductDetailPage"
+import LoginPage from "../pages/LoginPage";
+import HomePage from "../pages/frontend/HomePage";
+import ProductsPage from "../pages/frontend/ProductsPage";
+import ProductDetailPage from "../pages/frontend/ProductDetailPage"
+import CartPage from "../pages/frontend/CartPage";
 import NotFoundPage from "../pages/NotFoundPage";
-import LoginPage from "../pages/admin/LoginPage";
 import DashboardPage from "../pages/admin/DashboardPage";
 
 const router = createHashRouter([
