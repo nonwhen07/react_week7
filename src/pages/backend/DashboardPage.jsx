@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import ReactLoading from 'react-loading';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
-import Pagination from '../../components/dashboard/Pagination';
+import Pagination from '../../components/Pagination';
+import Toast from '../../components/Toast';
 import ProductModal from '../../components/dashboard/ProductModal';
 import DeleteModal from '../../components/dashboard/DeleteModal';
-
 
 
 export default function DashboardPage() {
@@ -176,7 +176,8 @@ export default function DashboardPage() {
 
       <DeleteModal tempProduct={tempProduct} getProducts={getProducts}
         isOpen={isDeleteModalOpen} setIsOpen={setIsDeleteModalOpen} />
-
+      
+      <Toast />
       {/* ScreenLoading */}
       {
         isScreenLoading && (
