@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 
 const routes = [
-  { path: "/", name: "後台首頁" },
+  { path: "/dashboard", name: "後台首頁" },
   // { path: "/orders", name: "訂單列表" },
 ];
 

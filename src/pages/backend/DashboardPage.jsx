@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import Pagination from '../../components/Pagination';
 import Toast from '../../components/Toast';
-import ProductModal from '../../components/dashboard/ProductModal';
-import DeleteModal from '../../components/dashboard/DeleteModal';
+import ProductModal from '../../components/backend/ProductModal';
+import DeleteModal from '../../components/backend/DeleteModal';
 
 
 export default function DashboardPage() {

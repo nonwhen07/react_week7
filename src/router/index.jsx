@@ -7,7 +7,7 @@ import ProductsPage from "../pages/frontend/ProductsPage";
 import ProductDetailPage from "../pages/frontend/ProductDetailPage"
 import CartPage from "../pages/frontend/CartPage";
 import NotFoundPage from "../pages/NotFoundPage";
-import DashboardPage from "../pages/admin/DashboardPage";
+import DashboardPage from "../pages/backend/DashboardPage";
 
 const router = createHashRouter([
   {
