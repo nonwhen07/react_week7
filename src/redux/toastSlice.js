@@ -2,13 +2,14 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   //測試資料
-  messages: [
-    {
-      id: Date.now(),
-      text: "hello",
-      status: "success",
-    },
-  ],
+  // messages: [
+  //   {
+  //     id: Date.now(),
+  //     text: "hello",
+  //     status: "success",
+  //   },
+  // ],
+  messages: [],
 };
 
 const toastSlice = createSlice({
@@ -24,9 +25,20 @@ const toastSlice = createSlice({
         status,
       });
     },
+    removeMessage(state, action) {
+      const message_id = action.payload;
+      const index = state.messages.findIndex(
+        (message) => message.id === message_id
+      );
+
+      if (index !== -1) {
+        state.messages.splice(index, 1);
+      }
+    },
   },
 });
 
-export const { pushMessage } = toastSlice.actions;
+// 用 actions 將設定好的方法匯出
+export const { pushMessage, removeMessage } = toastSlice.actions;
 
 export default toastSlice.reducer;

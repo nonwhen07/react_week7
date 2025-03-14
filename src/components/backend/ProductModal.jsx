@@ -82,59 +82,49 @@ export default function ProductModal ({modalMode, tempProduct, getProducts, isOp
     }
   };
 
-  // 新增、編輯、刪除產品動點
+  // 新增、編輯、刪除產品動點 => 調整成由 handleUpdateProduct 來顯示 dispatch 模式和訊息
   const handleUpdateProduct = async () => {
     setIsLoading(true);
     const apiCall = modalMode === "create" ? createProduct : updateProduct;
     try {
-      await apiCall();
+      await apiCall(); // 呼叫對應的 createProduct 或 updateProduct
       getProducts(); // 更新完畢後，驅動外部頁面重新查詢資料
       handleCloseProductModal();
-      dispatch(pushMessage({ text: "產品更新成功", status: "success" }));
+      dispatch(pushMessage({ text: `${modalMode === "create" ? "新增" : "編輯"}產品成功`, status: "success" }));
     } catch (error) {
-      const { message } = error.response.data;
-      dispatch(pushMessage({ text: message.join("、"), status: "failed" }));
-    } finally{
+      console.error(error);
+      const errorMessage = error.response?.data?.message || "發生錯誤，請稍後再試";
+      dispatch(pushMessage({ text: errorMessage, status: "failed" }));
+    } finally {
       setIsLoading(false);
     }
   };
   // 新增
   const createProduct = async () => {
-    try {
-      await axios.post(`${baseURL}/v2/api/${apiPath}/admin/product`, {
+    await axios.post(`${baseURL}/v2/api/${apiPath}/admin/product`, {
+      data: {
+        ...modalData,
+        origin_price: Number(modalData.origin_price),
+        price: Number(modalData.price),
+        is_enabled: modalData.is_enabled ? 1 : 0,
+      },
+    });
+  };
+  // 編輯
+  const updateProduct = async () => {
+    await axios.put(
+      `${baseURL}/v2/api/${apiPath}/admin/product/${modalData.id}`,
+      {
         data: {
           ...modalData,
           origin_price: Number(modalData.origin_price),
           price: Number(modalData.price),
           is_enabled: modalData.is_enabled ? 1 : 0,
         },
-      });
-    } catch (error) {
-      // console.error(error);
-      // alert("新增產品失敗");
-      const { message } = error.response.data;
-      dispatch(pushMessage({ text: message.join("、"), status: "failed" }));
-    }
+      }
+    );
   };
-  // 編輯
-  const updateProduct = async () => {
-    try {
-      await axios.put(
-        `${baseURL}/v2/api/${apiPath}/admin/product/${modalData.id}`,
-        {
-          data: {
-            ...modalData,
-            origin_price: Number(modalData.origin_price),
-            price: Number(modalData.price),
-            is_enabled: modalData.is_enabled ? 1 : 0,
-          },
-        }
-      );
-    } catch (error) {
-      console.error(error);
-      alert("編輯產品失敗");
-    }
-  };
+
 
   // Modal 開關控制
   const handleCloseProductModal = () => {
@@ -168,6 +158,7 @@ export default function ProductModal ({modalMode, tempProduct, getProducts, isOp
       if (modalInstance) modalInstance.hide();
     }
   }, [isOpen]);
+
 
   // 當外部 tempProduct 有異動時，更新modalData
   useEffect(() => {
