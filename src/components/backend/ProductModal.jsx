@@ -1,19 +1,27 @@
 import { useState, useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
+import { pushMessage } from "../../redux/toastSlice";
+import { Modal } from "bootstrap";
 import ReactLoading from 'react-loading';
 import axios from "axios";
-import { Modal } from "bootstrap";
 
 export default function ProductModal ({modalMode, tempProduct, getProducts, isOpen, setIsOpen }) {
   // 環境變數
   const baseURL = import.meta.env.VITE_BASE_URL;
   const apiPath = import.meta.env.VITE_API_PATH;
 
+  // dispatch 是用來發送 actions 到 Redux store 的，讓我們可以修改 store 的狀態。
+  const dispatch = useDispatch();
+
   //拷貝 tempProduct 資料來轉換成 modalData來顯示
   const [modalData, setModalData] = useState(tempProduct);
+  
   // Modal Ref 定義
   const productModalRef = useRef(null); 
-
+  // 設置loading狀態
   const [isLoading, setIsLoading] = useState(false);
+  
+  
 
   // Modal表單-變更事件
   const handleModalInputChange = (e) => {
@@ -67,8 +75,10 @@ export default function ProductModal ({modalMode, tempProduct, getProducts, isOp
         imageUrl: imgUploadUrl,
       }));
     } catch (error) {
-      console.error(error);
-      alert(error);
+      // console.error(error);
+      // alert("產品主圖上傳失敗");
+      const { message } = error.response.data;
+      dispatch(pushMessage({ text: message.join("、"), status: "failed" }));
     }
   };
 
@@ -80,9 +90,10 @@ export default function ProductModal ({modalMode, tempProduct, getProducts, isOp
       await apiCall();
       getProducts(); // 更新完畢後，驅動外部頁面重新查詢資料
       handleCloseProductModal();
+      dispatch(pushMessage({ text: "產品更新成功", status: "success" }));
     } catch (error) {
-      console.error(error);
-      alert("更新產品失敗");
+      const { message } = error.response.data;
+      dispatch(pushMessage({ text: message.join("、"), status: "failed" }));
     } finally{
       setIsLoading(false);
     }
@@ -99,8 +110,10 @@ export default function ProductModal ({modalMode, tempProduct, getProducts, isOp
         },
       });
     } catch (error) {
-      console.error(error);
-      alert("新增產品失敗");
+      // console.error(error);
+      // alert("新增產品失敗");
+      const { message } = error.response.data;
+      dispatch(pushMessage({ text: message.join("、"), status: "failed" }));
     }
   };
   // 編輯
@@ -180,7 +193,6 @@ export default function ProductModal ({modalMode, tempProduct, getProducts, isOp
       ref={productModalRef}
       className="modal"
       style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
-      inert={!isOpen}
     >
       <div className="modal-dialog modal-dialog-centered modal-xl">
         <div className="modal-content border-0 shadow">

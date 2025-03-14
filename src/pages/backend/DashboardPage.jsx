@@ -3,7 +3,6 @@ import ReactLoading from 'react-loading';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import Pagination from '../../components/Pagination';
-import Toast from '../../components/Toast';
 import ProductModal from '../../components/backend/ProductModal';
 import DeleteModal from '../../components/backend/DeleteModal';
 
@@ -177,7 +176,10 @@ export default function DashboardPage() {
       <DeleteModal tempProduct={tempProduct} getProducts={getProducts}
         isOpen={isDeleteModalOpen} setIsOpen={setIsDeleteModalOpen} />
       
-      <Toast />
+      {/* 確保以移動去main.jsx，確保 Toast 能全局監聽 Redux 狀態 */}
+      {/* <Toast /> */}
+
+
       {/* ScreenLoading */}
       {
         isScreenLoading && (

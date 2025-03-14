@@ -17,7 +17,7 @@ export default function Toast() {
         toastInstance.show();
       }
     });
-  },[])
+  }, [messages]);
 
   return(
   <>
