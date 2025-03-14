@@ -1,5 +1,6 @@
 import { createHashRouter } from "react-router-dom";
 import FonterLayout from "../layouts/FrontLayout";
+import BackLayout from "../layouts/BackLayout";
 import LoginPage from "../pages/LoginPage";
 import HomePage from "../pages/frontend/HomePage";
 import ProductsPage from "../pages/frontend/ProductsPage";
@@ -36,9 +37,17 @@ const router = createHashRouter([
     path:'/login',
     element:<LoginPage />
   },
-  { // Admin - Dashboard頁面
+  { // Admin後台頁面
+    // path:'/dashboard',
+    // element:<DashboardPage />
     path:'/dashboard',
-    element:<DashboardPage />
+    element: <BackLayout />,
+    children:[
+      { //Dashboard頁面
+        path: '',
+        element: <DashboardPage />,
+      }
+    ]
   },
   { // 404頁面
     path:'*',
