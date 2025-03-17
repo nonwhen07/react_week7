@@ -104,10 +104,6 @@ export default function ProductModal({
         })
       );
     } catch (error) {
-      // console.error(error);
-
-      //const errorMessage =
-      //   error.response?.data?.message?.join('、') || '發生錯誤，請稍後再試';
       const rawMessage = error.response?.data?.message;
       const errorMessage = Array.isArray(rawMessage)
         ? rawMessage.join('、')
@@ -159,6 +155,10 @@ export default function ProductModal({
     //以下幾行處理 綁定 Modal hide 事件（當 Modal 被 ESC 關閉，或點 backdrop 關閉）
     const handleHidden = () => {
       setIsOpen(false); // 同步更新 React 狀態
+
+      // 你在關閉 ProductModal 時，Bootstrap 自動加上 aria-hidden="true"，但 Modal 裡面的按鈕還有焦點。
+      // React、Bootstrap 在執行 .hide() 或切換 Modal 狀態時出現 焦點未移除，就會出現這個警告。
+      document.activeElement.blur(); // 在 Modal 關閉時，把焦點移走（如移到 body），讓 ARIA 不衝突。
     };
     const refCurrent = productModalRef.current;
     refCurrent.addEventListener('hidden.bs.modal', handleHidden);
@@ -171,15 +171,6 @@ export default function ProductModal({
   }, []);
 
   // Modal 開關控制
-  // useEffect(() => {
-  //   // 集中處理開關 由 isOpen 判斷
-  //   if (isOpen && productModalRef.current) {
-  //     new Modal(productModalRef.current, { backdrop: false }).show();
-  //   } else if (!isOpen && productModalRef.current) {
-  //     const modalInstance = Modal.getInstance(productModalRef.current);
-  //     if (modalInstance) modalInstance.hide();
-  //   }
-  // }, [isOpen]);
   useEffect(() => {
     const modalInstance = modalInstanceRef.current;
     if (!modalInstance) return;

@@ -40,10 +40,11 @@ export default function DeleteModal({
 
       dispatch(pushMessage({ text: '刪除商品成功', status: 'success' }));
     } catch (error) {
-      // console.error(error);
-      // alert("刪除商品失敗");
-      const { message } = error.response?.data || { message: ['刪除商品失敗'] };
-      dispatch(pushMessage({ text: message.join('、'), status: 'failed' }));
+      const rawMessage = error.response?.data?.message;
+      const errorMessage = Array.isArray(rawMessage)
+        ? rawMessage.join('、')
+        : rawMessage || '發生錯誤，請稍後再試';
+      dispatch(pushMessage({ text: errorMessage, status: 'failed' }));
       // setIsLoading(false);
     } finally {
       setIsLoading(false);
@@ -57,11 +58,6 @@ export default function DeleteModal({
   };
 
   //初始化 Modal
-  // useEffect(() => {
-  //   if (deleteModalRef.current) {
-  //     new Modal(deleteModalRef.current, { backdrop: false });
-  //   }
-  // }, []);
   useEffect(() => {
     if (deleteModalRef.current) {
       modalInstanceRef.current = new Modal(deleteModalRef.current, {
@@ -72,6 +68,10 @@ export default function DeleteModal({
     //以下幾行處理 綁定 Modal hide 事件（當 Modal 被 ESC 關閉，或點 backdrop 關閉）
     const handleHidden = () => {
       setIsOpen(false); // 同步更新 React 狀態
+
+      // 你在關閉 DeleteModal 時，Bootstrap 自動加上 aria-hidden="true"，但 Modal 裡面的按鈕還有焦點。
+      // React、Bootstrap 在執行 .hide() 或切換 Modal 狀態時出現 焦點未移除，就會出現這個警告。
+      document.activeElement.blur(); // 在 Modal 關閉時，把焦點移走（如移到 body），讓 ARIA 不衝突。
     };
     const refCurrent = deleteModalRef.current;
     refCurrent.addEventListener('hidden.bs.modal', handleHidden);

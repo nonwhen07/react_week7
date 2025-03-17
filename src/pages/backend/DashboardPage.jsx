@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { pushMessage } from '../../redux/toastSlice';
-import ReactLoading from 'react-loading';
 import axios from 'axios';
+import ReactLoading from 'react-loading';
+
 import Pagination from '../../components/Pagination';
 import ProductModal from '../../components/backend/ProductModal';
 import DeleteModal from '../../components/backend/DeleteModal';
+import { pushMessage } from '../../redux/toastSlice';
 
 export default function DashboardPage() {
   // 初始化 navigate
@@ -17,15 +18,6 @@ export default function DashboardPage() {
   const baseURL = import.meta.env.VITE_BASE_URL;
   const apiPath = import.meta.env.VITE_API_PATH;
 
-  // Modal Ref 定義
-  // 狀態管理 (State)
-  const [products, setProducts] = useState([]);
-  const [pageInfo, setPageInfo] = useState({});
-  // 管理Modal元件開關
-  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
-  // 狀態管理 (State)
   //Modal 資料狀態的預設值
   const defaultModalState = {
     imageUrl: '',
@@ -39,9 +31,29 @@ export default function DashboardPage() {
     is_enabled: 0,
     imagesUrl: [''],
   };
+
+  // 狀態管理 (State)
+  const [products, setProducts] = useState([]);
+  const [pageInfo, setPageInfo] = useState({});
   const [tempProduct, setTempProduct] = useState(defaultModalState);
   const [modalMode, setModalMode] = useState(null);
+
+  // 管理Modal元件開關
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  // 螢幕Loading遮罩
   const [isScreenLoading, setIsScreenLoading] = useState(false);
+
+  // useEffect - 初始化 初始檢查登入狀態，如果沒有就轉到登入頁面
+  useEffect(() => {
+    const token = document.cookie.replace(
+      /(?:(?:^|.*;\s*)hexToken4\s*=\s*([^;]*).*$)|^.*$/,
+      '$1'
+    );
+    axios.defaults.headers.common['Authorization'] = token;
+    checkLogin();
+  }, []);
 
   // API & 認證相關函式
   const checkLogin = () => {
@@ -52,10 +64,12 @@ export default function DashboardPage() {
         getProducts();
       })
       .catch(error => {
-        const { message } = error.response?.data || {
-          message: ['請先登入，將導向登入頁面'],
-        };
-        dispatch(pushMessage({ text: message, status: 'failed' }));
+        const rawMessage = error.response?.data?.message;
+        const errorMessage = Array.isArray(rawMessage)
+          ? rawMessage.join('、')
+          : rawMessage || '請先登入，將導向登入頁面';
+        dispatch(pushMessage({ text: errorMessage, status: 'failed' }));
+
         navigate('/login'); // **確認沒有登入就跳轉到 LoginPage**
       })
       .finally(() => {
@@ -72,10 +86,11 @@ export default function DashboardPage() {
       setProducts(res.data.products);
       setPageInfo(res.data.pagination);
     } catch (error) {
-      const { message } = error.response?.data || {
-        message: ['取得產品列表失敗'],
-      };
-      dispatch(pushMessage({ text: message.join('、'), status: 'failed' }));
+      const rawMessage = error.response?.data?.message;
+      const errorMessage = Array.isArray(rawMessage)
+        ? rawMessage.join('、')
+        : rawMessage || '取得產品列表失敗';
+      dispatch(pushMessage({ text: errorMessage, status: 'failed' }));
     } finally {
       setIsScreenLoading(false);
     }
@@ -104,16 +119,6 @@ export default function DashboardPage() {
     // Modal.getInstance(deleteModalRef.current).show();
     setIsDeleteModalOpen(true);
   };
-
-  // useEffect - 初始化 初始檢查登入狀態，如果沒有就轉到登入頁面
-  useEffect(() => {
-    const token = document.cookie.replace(
-      /(?:(?:^|.*;\s*)hexToken4\s*=\s*([^;]*).*$)|^.*$/,
-      '$1'
-    );
-    axios.defaults.headers.common['Authorization'] = token;
-    checkLogin();
-  }, []);
 
   return (
     <>
