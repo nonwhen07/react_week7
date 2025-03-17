@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ReactLoading from 'react-loading';
+import { useDispatch } from "react-redux";
+import { pushMessage } from "../redux/toastSlice";
 import axios from "axios";
+import ReactLoading from 'react-loading';
+
 
 export default function LoginPage() {
   
-  // 初始化 navigate
+  // 初始化 navigate、dispatch
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   // 環境變數
   const baseURL = import.meta.env.VITE_BASE_URL;
   // const apiPath = import.meta.env.VITE_API_PATH;
@@ -24,11 +28,16 @@ export default function LoginPage() {
       axios.defaults.headers.common['Authorization'] = token;
       // getProducts(); // 查詢商品資料列表
       // setIsAuth(true); // 設定登入狀態
+
+      dispatch(pushMessage({ text: "登入成功", status: "success" }));
+
       navigate("/dashboard"); // **登入成功後跳轉到 Dashboard**
     })
     .catch((error) => {
-      console.error(error);
-      alert('登入失敗');
+      // console.error(error);
+      // alert('登入失敗');
+      const { message } = error.response.data;
+      dispatch(pushMessage({ text: message.join("、"), status: "failed" }));
     }).finally(()=>{
       setIsScreenLoading(false);
     });

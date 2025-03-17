@@ -1,14 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  //測試資料
-  // messages: [
-  //   {
-  //     id: Date.now(),
-  //     text: "hello",
-  //     status: "success",
-  //   },
-  // ],
   messages: [],
 };
 

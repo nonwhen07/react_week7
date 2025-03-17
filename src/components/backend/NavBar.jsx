@@ -20,7 +20,7 @@ export default function NavBar() {
   const handleLogout = async () => {
     try {
       await axios.post( `${baseURL}/v2/logout`);
-      dispatch(pushMessage({ text: "已成功登出，將跳轉到登入頁面", status: "failed" }));
+      dispatch(pushMessage({ text: "已成功登出，將跳轉到登入頁面", status: "success" }));
 
       setTimeout(() => {   
         navigate("/login"); // **登入成功後跳轉到 login**
